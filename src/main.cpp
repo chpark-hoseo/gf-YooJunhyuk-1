@@ -30,14 +30,14 @@ Game* g_game = 0;
 int main(int argc, char* argv[])
 {
 	g_game = new Game();
-	g_game->init("HelloSDL", 100, 100, 640, 480, 0);
-	while (g_game->running())
+	g_game->Init("HelloSDL", 100, 100, 640, 480, 0);
+	while (g_game->Running())
 	{
-		g_game->handleEvents();
-		g_game->update();
-		g_game->render();
+		g_game->HandleEvents();
+		g_game->Update();
+		g_game->Render();
 	}
-	g_game->clean();
+	g_game->Clean();
 
 	return 0;
 }

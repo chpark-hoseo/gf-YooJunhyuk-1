@@ -1,6 +1,6 @@
 #include "../include/Game.h"
 
-bool Game::init(const char* title, int xpos, int ypos, int width, int height, int flags)
+bool Game::Init(const char* title, int xpos, int ypos, int width, int height, int flags)
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
     {
@@ -11,19 +11,11 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, in
 
             if (m_pRenderer != 0)
             {
-                SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 0, 255);
-
-                SDL_Surface* pTempSurface = SDL_LoadBMP("Assets/rider.bmp");
-
-                m_pTexture = SDL_CreateTextureFromSurface(m_pRenderer, pTempSurface);
-
-                SDL_FreeSurface(pTempSurface);
-
-                SDL_QueryTexture(m_pTexture, NULL, NULL, &m_sourceRectangle.w, &m_sourceRectangle.h);
-                m_destinationRectangle.w = m_sourceRectangle.w;
-                m_destinationRectangle.h = m_sourceRectangle.h;
-                m_destinationRectangle.x = m_sourceRectangle.x = 0;
-                m_destinationRectangle.y = m_sourceRectangle.y = 0;
+                SDL_SetRenderDrawColor(m_pRenderer, 255, 0, 0, 255);
+                if (!TextureM::Instance()->Load("Assets/animate-alpha.png", "animate", m_pRenderer))
+                {
+                    return false;
+                }
             }
             else
             {
@@ -32,7 +24,7 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, in
         }
         else
         {
-            return false; // 윈도우 생설 실패 l
+            return false; // 윈도우 생설 실패
         }
     }
     else
@@ -44,24 +36,25 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, in
     return true;
 }
 
-void Game::render()
+void Game::Render()
 {
     SDL_RenderClear(m_pRenderer);
-    SDL_RenderCopy(m_pRenderer, m_pTexture, &m_sourceRectangle, &m_destinationRectangle);
+    TextureM::Instance()->Draw("animate", 0, 0, 128, 82, m_pRenderer);
+    TextureM::Instance()->DrawFrame("animate", 100, 100, 128, 82, 0, m_currentFrame, m_pRenderer);
     SDL_RenderPresent(m_pRenderer);
 }
 
-void Game::update()
+void Game::Update()
 {
-
+    m_currentFrame = ((SDL_GetTicks() / 100) % 6);
 }
 
-bool Game::running()
+bool Game::Running()
 {
     return m_bRunning;
 }
 
-void Game::handleEvents()
+void Game::HandleEvents()
 {
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -89,7 +82,7 @@ void Game::handleEvents()
     }
 }
 
-void Game::clean()
+void Game::Clean()
 {
     SDL_DestroyWindow(m_pWindow);
     SDL_DestroyRenderer(m_pRenderer);
